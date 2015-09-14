@@ -64,7 +64,7 @@ class LogParser
 
     const NUM_TOP_ITEMS = 10;
 
-    private $aUserAgentList = ['firefox', 'trident', 'webkit']; # # define common browsers (basic list - add more here) ; Safari/Chrome are 'webkit'
+    private $aUserAgentList = ['firefox', 'trident', 'webkit']; # define common browsers (basic list - add more here); Safari and Chrome are both 'webkit'
     private $iCount = 0;
     private $iParseCount = 0;
     private $iHTTPErrors = 0;
@@ -72,7 +72,7 @@ class LogParser
     private $aAccessedFiles = [];
     private $aReferrers = [];
     private $aUserAgents = [];
-    private $rxPattern = '/^([^ ]+) ([^ ]+) ([^ ]+) (\[[^\]]+\]) "(.*) (.*) (.*)" ([0-9\-]+) ([0-9\-]+) "(.*)" "(.*)"$/';
+    private $rxPattern = '/^([^ ]+) ([^ ]+) ([^ ]+) (\[[^\]]+\]) "(.*) (.*) (.*)" ([0-9\-]+) ([0-9\-]+) "(.*)" "(.*)"$/'; # credits: David Sklar and Adam Trachtenberg
 
 
     public function __construct($sFile)
