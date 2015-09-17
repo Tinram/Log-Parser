@@ -4,18 +4,29 @@
 
 ## Purpose
 
-Parse Apache log files and display top count statistics (i.e. files, referrers).
+Parse Apache server log files and display top count statistics (i.e. files, referrers).
 
-Runs on the Linux and Windows the command-line or through the local server.
+Runs as either a command-line tool or through the local server.
 
 
 ## Examples
 
+### Linux
+
 `php -f logparser.php /var/log/apache2/access.log`
+
+or
+
+`logparser /var/log/apache2/access.log`
+
+if the file renamed and placed in `/usr/local/bin`
+
+
+### Windows
 
 `php -f logparser.php C:\XAMPP\apache\logs\access.log`
 
 
-### License
+## License
 
 Log Parser is released under the [GPL v.3](https://www.gnu.org/licenses/gpl-3.0.html).
