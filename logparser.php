@@ -45,11 +45,12 @@ class LogParser
         * Apache log file parser.
         *
         * Coded for PHP 5.4+
-        * Tested on Debian and Windows (XAMPP) Apache log files.
+        * Tested on Debian, CentOS, and Windows (XAMPP) Apache log files.
         *
         * Example usage:
         *
         *                php -f logparser.php /var/log/apache2/access.log
+        *                php -f logparser.php /var/log/httpd/access_log
         *                php -f logparser.php C:\XAMPP\apache\logs\access.log
         *
         *                or add access.log file into web directory and run server
