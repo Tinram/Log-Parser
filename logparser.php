@@ -57,7 +57,7 @@ class LogParser
         *
         * @author        Martin Latter <copysense.co.uk>
         * @copyright     Martin Latter 02/09/2015
-        * @version       0.2
+        * @version       0.21
         * @license       GNU GPL version 3.0 (GPL v3); http://www.gnu.org/licenses/gpl.html
         * @link          https://github.com/Tinram/Log-Parser.git
     */
@@ -65,7 +65,7 @@ class LogParser
 
     const NUM_TOP_ITEMS = 10;
 
-    private $aUserAgentList = ['firefox', 'trident', 'webkit']; # define common browsers (basic list - add more here); Safari and Chrome are both 'webkit'
+    private $aUserAgentList = ['firefox', 'trident', 'webkit']; # define common browsers (basic list - add more in lowercase here); Safari and Chrome are both 'webkit'
     private $iCount = 0;
     private $iParseCount = 0;
     private $iHTTPErrors = 0;
@@ -73,7 +73,7 @@ class LogParser
     private $aAccessedFiles = [];
     private $aReferrers = [];
     private $aUserAgents = [];
-    private $rxPattern = '/^([^ ]+) ([^ ]+) ([^ ]+) (\[[^\]]+\]) "(.*) (.*) (.*)" ([0-9\-]+) ([0-9\-]+) "(.*)" "(.*)"$/'; # credits: David Sklar and Adam Trachtenberg
+    private $rxPattern = '/^([^ ]+) ([^ ]+) ([^ ]+) (\[[^\]]+\]) "(.*) (.*) (.*)" ([0-9\-]+) ([0-9\-]+) "(.*)" "(.*)"$/'; # regex credits: David Sklar and Adam Trachtenberg
 
 
     public function __construct($sFile)
@@ -147,7 +147,7 @@ class LogParser
 
                     foreach ($this->aUserAgentList as $sBrowser)
                     {
-                        if (stripos($sUserAgent, $sBrowser) !== false)
+                        if (strpos($sUserAgent, $sBrowser) !== false)
                         {
                             if (isset($this->aUserAgents[$sBrowser]))
                             {
@@ -228,7 +228,7 @@ class LogParser
 
         foreach ($aItems as $sKey => $sNum)
         {
-            $sOut .= $sKey . ' : ' . $sNum;
+            $sOut .= $sNum . ' -- ' . $sKey;
 
             if ($bPercentReq)
             {
