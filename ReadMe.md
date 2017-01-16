@@ -17,7 +17,7 @@ Runs as either a command-line tool or through the local server.
 
 `php -f logparser.php /var/log/httpd/access_log` # CentOS
 
-or, if the file is renamed and placed in `/usr/local/bin`
+or if the script file is renamed, made executable, and placed in `/usr/local/bin`:
 
 `logparser /var/log/apache2/access.log`
 
