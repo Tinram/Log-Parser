@@ -3,7 +3,7 @@
 
 
 # command-line or server line-break output
-define('LINE_BREAK', (PHP_SAPI === 'cli') ? "\n" : '<br>');
+define('LINE_BREAK', (PHP_SAPI === 'cli') ? PHP_EOL : '<br>');
 
 
 # command-line usage
@@ -11,7 +11,7 @@ if (PHP_SAPI === 'cli')
 {
     if (@ ! $_SERVER['argv'][1]) 
     {
-        $sUsage = "\n " . basename($_SERVER['argv'][0], '.php') . "\n\n\tusage: " . basename($_SERVER['argv'][0], '.php') . " <filename>\n\n";
+        $sUsage = LINE_BREAK . ' ' . basename(__FILE__, '.php') . LINE_BREAK . LINE_BREAK . "\tusage: php -f " . basename(__FILE__) . ' <filename>' . LINE_BREAK . LINE_BREAK;
         die($sUsage);
     }
 
@@ -26,7 +26,7 @@ else
 
 if ( ! file_exists($sFile))
 {
-    die(LINE_BREAK . $sFile . ' does not exist in this directory!' . LINE_BREAK . LINE_BREAK);
+    die(LINE_BREAK . ' \'' . $sFile . '\' does not exist in this directory!' . LINE_BREAK . LINE_BREAK);
 }
 else
 {
@@ -65,7 +65,7 @@ class LogParser
 
     const NUM_TOP_ITEMS = 10;
 
-    private $aUserAgentList = ['firefox', 'trident', 'webkit']; # define common browsers (basic list - add more in lowercase here); Safari and Chrome are both 'webkit'
+    private $aUserAgentList = ['firefox', 'trident', 'webkit']; # define common browsers (basic list - add more here in lowercase); Safari and Chrome are both 'webkit'
     private $iCount = 0;
     private $iParseCount = 0;
     private $iHTTPErrors = 0;
