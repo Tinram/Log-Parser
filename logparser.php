@@ -57,7 +57,7 @@ class LogParser
         *
         * @author        Martin Latter <copysense.co.uk>
         * @copyright     Martin Latter 02/09/2015
-        * @version       0.21
+        * @version       0.22
         * @license       GNU GPL version 3.0 (GPL v3); http://www.gnu.org/licenses/gpl.html
         * @link          https://github.com/Tinram/Log-Parser.git
     */
@@ -73,11 +73,15 @@ class LogParser
     private $aAccessedFiles = [];
     private $aReferrers = [];
     private $aUserAgents = [];
+    private $sLineBreak = '';
+    private $sTab = '';
     private $rxPattern = '/^([^ ]+) ([^ ]+) ([^ ]+) (\[[^\]]+\]) "(.*) (.*) (.*)" ([0-9\-]+) ([0-9\-]+) "(.*)" "(.*)"$/'; # regex credits: David Sklar and Adam Trachtenberg
 
 
     public function __construct($sFile)
     {
+        $this->sLineBreak = (PHP_SAPI === 'cli') ? PHP_EOL : '<br>';
+        $this->sTab = (PHP_SAPI === 'cli') ? "\t" : str_repeat('&nbsp;', 4);
         $this->processFile($sFile);
     }
 
@@ -164,7 +168,7 @@ class LogParser
                 }
                 else
                 {
-                    echo 'Parse failure at line' . $this->iCount . ': ' . $sLine . LINE_BREAK;
+                    echo 'Parse failure at line' . $this->iCount . ': ' . $sLine . $this->sLineBreak;
                 }
             }
 
@@ -186,16 +190,16 @@ class LogParser
     {
         $sReport = '';
 
-        $sReport .= LINE_BREAK . 'Lines parsed: ' . $this->iCount . LINE_BREAK;
-        $sReport .= 'Correctly parsed log file entries: ' . $this->iParseCount . LINE_BREAK . LINE_BREAK;
-        $sReport .= 'HTTP success codes: ' . $this->iHTTPSuccess . LINE_BREAK;
-        $sReport .= 'HTTP error codes: ' . $this->iHTTPErrors . LINE_BREAK;
+        $sReport .= $this->sLineBreak . 'Lines parsed: ' . $this->iCount . $this->sLineBreak;
+        $sReport .= 'Correctly parsed log file entries: ' . $this->iParseCount . $this->sLineBreak . $this->sLineBreak;
+        $sReport .= 'HTTP success codes: ' . $this->iHTTPSuccess . $this->sLineBreak;
+        $sReport .= 'HTTP error codes: ' . $this->iHTTPErrors . $this->sLineBreak;
 
         $sReport .= $this->processFieldCount($this->aAccessedFiles, 'Top accessed files (hits)');
         $sReport .= $this->processFieldCount($this->aReferrers, 'Top referrers');
         $sReport .= $this->processFieldCount($this->aUserAgents, 'Top user agents', true);
 
-        $sReport .= LINE_BREAK;
+        $sReport .= $this->sLineBreak;
 
         return $sReport;
 
@@ -224,11 +228,11 @@ class LogParser
         # extract top items and use for output
         $aItems = array_slice($aItems, 0, self::NUM_TOP_ITEMS);
 
-        $sOut = LINE_BREAK . $sDescription . ':' . LINE_BREAK;
+        $sOut = $this->sLineBreak . $sDescription . ':' . $this->sLineBreak;
 
         foreach ($aItems as $sKey => $sNum)
         {
-            $sOut .= $sNum . ' -- ' . $sKey;
+            $sOut .= sprintf('%4d' . $this->sTab . '%s', $sNum, $sKey);
 
             if ($bPercentReq)
             {
@@ -236,7 +240,7 @@ class LogParser
                 $sOut .= ' (' . sprintf('%01.2f', $fValue) . ' %)';
             }
 
-            $sOut .= LINE_BREAK;
+            $sOut .= $this->sLineBreak;
         }
 
         return $sOut;
