@@ -1,5 +1,6 @@
-#!/usr/bin/php
 <?php
+
+declare(strict_types = 1);
 
 
 # command-line or server line-break output
@@ -9,9 +10,9 @@ define('LINE_BREAK', (PHP_SAPI === 'cli') ? PHP_EOL : '<br>');
 # command-line usage
 if (PHP_SAPI === 'cli')
 {
-    if (@ ! $_SERVER['argv'][1]) 
+    if ( ! isset($_SERVER['argv'][1]))
     {
-        $sUsage = LINE_BREAK . ' ' . basename(__FILE__, '.php') . LINE_BREAK . LINE_BREAK . "\tusage: php -f " . basename(__FILE__) . ' <filename>' . LINE_BREAK . LINE_BREAK;
+        $sUsage = LINE_BREAK . ' ' . basename(__FILE__, '.php') . LINE_BREAK . LINE_BREAK . "\tusage: php " . basename(__FILE__) . ' <filename>' . LINE_BREAK . LINE_BREAK;
         die($sUsage);
     }
 
@@ -35,29 +36,28 @@ else
 }
 
 
-
 ##################################################################################
 
 
-class LogParser
+final class LogParser
 {
     /**
         * Apache log file parser.
         *
-        * Coded for PHP 5.4+
+        * Coded for PHP 7.0+
         * Tested on Debian, CentOS, and Windows (XAMPP) Apache log files.
         *
         * Example usage:
         *
-        *                php -f logparser.php /var/log/apache2/access.log
-        *                php -f logparser.php /var/log/httpd/access_log
-        *                php -f logparser.php C:\XAMPP\apache\logs\access.log
+        *                php logparser.php /var/log/apache2/access.log
+        *                php logparser.php /var/log/httpd/access_log
+        *                php logparser.php C:\XAMPP\apache\logs\access.log
         *
         *                or add access.log file into web directory and run server
         *
         * @author        Martin Latter <copysense.co.uk>
         * @copyright     Martin Latter 02/09/2015
-        * @version       0.22
+        * @version       0.23
         * @license       GNU GPL version 3.0 (GPL v3); http://www.gnu.org/licenses/gpl.html
         * @link          https://github.com/Tinram/Log-Parser.git
     */
@@ -78,7 +78,7 @@ class LogParser
     private $rxPattern = '/^([^ ]+) ([^ ]+) ([^ ]+) (\[[^\]]+\]) "(.*) (.*) (.*)" ([0-9\-]+) ([0-9\-]+) "(.*)" "(.*)"$/'; # regex credits: David Sklar and Adam Trachtenberg
 
 
-    public function __construct($sFile)
+    public function __construct(string $sFile)
     {
         $this->sLineBreak = (PHP_SAPI === 'cli') ? PHP_EOL : '<br>';
         $this->sTab = (PHP_SAPI === 'cli') ? "\t" : str_repeat('&nbsp;', 4);
@@ -95,7 +95,7 @@ class LogParser
         * @param   string $sFile, filename
     */
 
-    private function processFile($sFile)
+    private function processFile(string $sFile)
     {
         $aMatches = [];
 
@@ -108,68 +108,67 @@ class LogParser
             die('Could not open log file! (' . $sFile . ')');
         }
 
-        while ( ! feof($rFH))
+        while (($sLine = fgets($rFH, 1024)) !== false)
         {
-            if ($sLine = trim(fgets($rFH, 1024)))
+            $sLine = trim($sLine);
+
+            if (preg_match($this->rxPattern, $sLine, $aMatches))
             {
-                if (preg_match($this->rxPattern, $sLine, $aMatches))
+                # HTTP general status code count
+                $sResponseDigit = substr($aMatches[8], 0, 1);
+
+                if ($sResponseDigit === '2' || $sResponseDigit === '3')
                 {
-                    # HTTP general status code count
-                    $sResponseDigit = substr($aMatches[8], 0, 1);
+                    $this->iHTTPSuccess++;
+                }
+                else if ($sResponseDigit === '4' || $sResponseDigit === '5')
+                {
+                    $this->iHTTPErrors++;
+                }
 
-                    if ($sResponseDigit === '2' || $sResponseDigit === '3')
-                    {
-                        $this->iHTTPSuccess++;
-                    }
-                    else if ($sResponseDigit === '4' || $sResponseDigit === '5')
-                    {
-                        $this->iHTTPErrors++;
-                    }
-
-                    # accessed file count
-                    if (isset($this->aAccessedFiles[$aMatches[6]]))
-                    {
-                        $this->aAccessedFiles[$aMatches[6]]++;
-                    }
-                    else
-                    {
-                        $this->aAccessedFiles[$aMatches[6]] = 1;
-                    }
-
-                    # referrer count
-                    if (isset($this->aReferrers[$aMatches[10]]))
-                    {
-                        $this->aReferrers[$aMatches[10]]++;
-                    }
-                    else
-                    {
-                        $this->aReferrers[$aMatches[10]] = 1;
-                    }
-
-                    # user agent count
-                    $sUserAgent = strtolower($aMatches[11]);
-
-                    foreach ($this->aUserAgentList as $sBrowser)
-                    {
-                        if (strpos($sUserAgent, $sBrowser) !== false)
-                        {
-                            if (isset($this->aUserAgents[$sBrowser]))
-                            {
-                                $this->aUserAgents[$sBrowser]++;
-                            }
-                            else
-                            {
-                                $this->aUserAgents[$sBrowser] = 1;
-                            }
-                        }
-                    }
-
-                    $this->iParseCount++;
+                # accessed file count
+                if (isset($this->aAccessedFiles[$aMatches[6]]))
+                {
+                    $this->aAccessedFiles[$aMatches[6]]++;
                 }
                 else
                 {
-                    echo 'Parse failure at line' . $this->iCount . ': ' . $sLine . $this->sLineBreak;
+                    $this->aAccessedFiles[$aMatches[6]] = 1;
                 }
+
+                # referrer count
+                if (isset($this->aReferrers[$aMatches[10]]))
+                {
+                    $this->aReferrers[$aMatches[10]]++;
+                }
+                else
+                {
+                    $this->aReferrers[$aMatches[10]] = 1;
+                }
+
+                # user agent count
+                $sUserAgent = strtolower($aMatches[11]);
+
+                foreach ($this->aUserAgentList as $sBrowser)
+                {
+                    if (strpos($sUserAgent, $sBrowser) !== false)
+                    {
+                        if (isset($this->aUserAgents[$sBrowser]))
+                        {
+                            $this->aUserAgents[$sBrowser]++;
+                        }
+                        else
+                        {
+                            $this->aUserAgents[$sBrowser] = 1;
+                        }
+                    }
+                }
+
+                $this->iParseCount++;
+            }
+            else
+            {
+                echo 'Regex parse failure at line ' . ($this->iCount + 1) . ': ' . $sLine . $this->sLineBreak;
             }
 
             $this->iCount++;
@@ -186,7 +185,7 @@ class LogParser
         * @return  string
     */
 
-    public function generateReport()
+    public function generateReport(): string
     {
         $sReport = '';
 
@@ -216,7 +215,7 @@ class LogParser
         * @return  string
     */
 
-    private function processFieldCount(array $aItems, $sDescription = 'none', $bPercentReq = false)
+    private function processFieldCount(array $aItems, string $sDescription = 'none', bool $bPercentReq = false): string
     {
         arsort($aItems);
 
