@@ -13,9 +13,9 @@ Runs as either a command-line tool or through the local server.
 
 ### Linux
 
-`php -f logparser.php /var/log/apache2/access.log` # Debian-based
+`php logparser.php /var/log/apache2/access.log` # Debian-based
 
-`php -f logparser.php /var/log/httpd/access_log` # CentOS
+`php logparser.php /var/log/httpd/access_log` # CentOS
 
 or if the script file is renamed, made executable, and placed in `/usr/local/bin`:
 
@@ -24,7 +24,7 @@ or if the script file is renamed, made executable, and placed in `/usr/local/bin
 
 ### Windows
 
-`php -f logparser.php C:\XAMPP\apache\logs\access.log`
+`php logparser.php C:\XAMPP\apache\logs\access.log`
 
 
 ## License
