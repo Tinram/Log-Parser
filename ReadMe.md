@@ -1,10 +1,12 @@
 
 # Log Parser
 
+#### Simple Apache server log file analyser.
+
 
 ## Purpose
 
-Parse Apache server log files and display top count statistics (i.e. files, referrers).
+Parse server log files and display top count statistics (i.e. files, referrers).
 
 Runs as either a command-line tool or through the local server.
 
@@ -13,18 +15,30 @@ Runs as either a command-line tool or through the local server.
 
 ### Linux
 
-`php logparser.php /var/log/apache2/access.log` # Debian-based
+#### Debian-based
 
-`php logparser.php /var/log/httpd/access_log` # CentOS
+```bash
+    php logparser.php /var/log/apache2/access.log
+```
 
-or if the script file is renamed, made executable, and placed in `/usr/local/bin`:
+#### CentOS
 
-`logparser /var/log/apache2/access.log`
+```bash
+    php logparser.php /var/log/httpd/access_log
+```
+
+If the script file is renamed, made executable, and placed in a *$PATH* such as `/usr/local/bin`:
+
+```bash
+    logparser /var/log/apache2/access.log
+```
 
 
 ### Windows
 
-`php logparser.php C:\XAMPP\apache\logs\access.log`
+```batch
+    php logparser.php C:\XAMPP\apache\logs\access.log
+```
 
 
 ## License
