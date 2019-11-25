@@ -18,8 +18,7 @@ if (PHP_SAPI === 'cli')
 
     $sFile = $_SERVER['argv'][1];
 }
-# web server usage, file in same directory as this file
-else
+else # web server usage, file in same directory as this file
 {
     $sFile = 'access.log';
 }
@@ -55,7 +54,7 @@ final class LogParser
         *
         *                or add access.log file into web directory and run server
         *
-        * @author        Martin Latter <copysense.co.uk>
+        * @author        Martin Latter
         * @copyright     Martin Latter 02/09/2015
         * @version       0.23
         * @license       GNU GPL version 3.0 (GPL v3); http://www.gnu.org/licenses/gpl.html
@@ -246,4 +245,4 @@ final class LogParser
 
     } # end processFieldCount()
 
-} # end {}
+}
