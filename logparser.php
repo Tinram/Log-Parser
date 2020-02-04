@@ -12,7 +12,10 @@ if (PHP_SAPI === 'cli')
 {
     if ( ! isset($_SERVER['argv'][1]))
     {
-        $sUsage = LINE_BREAK . ' ' . basename(__FILE__, '.php') . LINE_BREAK . LINE_BREAK . "\tusage: php " . basename(__FILE__) . ' <filename>' . LINE_BREAK . LINE_BREAK;
+        $sUsage = LINE_BREAK .
+        ' ' . basename(__FILE__, '.php') .
+        LINE_BREAK . LINE_BREAK .
+        "\tusage: php " . basename(__FILE__) . ' <filename>' . LINE_BREAK . LINE_BREAK;
         die($sUsage);
     }
 
@@ -43,7 +46,7 @@ final class LogParser
     /**
         * Apache log file parser.
         *
-        * Coded for PHP 7.0+
+        * Coded for PHP 7.2
         * Tested on Debian, CentOS, and Windows (XAMPP) Apache log files.
         *
         * Example usage:
@@ -56,26 +59,54 @@ final class LogParser
         *
         * @author        Martin Latter
         * @copyright     Martin Latter 02/09/2015
-        * @version       0.23
+        * @version       0.24
         * @license       GNU GPL version 3.0 (GPL v3); http://www.gnu.org/licenses/gpl.html
         * @link          https://github.com/Tinram/Log-Parser.git
     */
 
 
+    /** @const string NUM_TOP_ITEMS */
     const NUM_TOP_ITEMS = 10;
 
+    /** @var array<string> $aUserAgentList, browsers */
     private $aUserAgentList = ['firefox', 'trident', 'webkit']; # define common browsers (basic list - add more here in lowercase); Safari and Chrome are both 'webkit'
+
+    /** @var integer $iCount */
     private $iCount = 0;
+
+    /** @var integer $iParseCount */
     private $iParseCount = 0;
+
+    /** @var integer $iHTTPErrors */
     private $iHTTPErrors = 0;
+
+    /** @var integer $iHTTPSuccess */
     private $iHTTPSuccess = 0;
+
+    /** @var array<integer> $aAccessedFiles */
     private $aAccessedFiles = [];
+
+    /** @var array<integer> $aReferrers */
     private $aReferrers = [];
+
+    /** @var array<integer> $aUserAgents */
     private $aUserAgents = [];
+
+    /** @var string $sLineBreak */
     private $sLineBreak = '';
+
+    /** @var string $sTab */
     private $sTab = '';
+
+    /** @var string $rxPattern */
     private $rxPattern = '/^([^ ]+) ([^ ]+) ([^ ]+) (\[[^\]]+\]) "(.*) (.*) (.*)" ([0-9\-]+) ([0-9\-]+) "(.*)" "(.*)"$/'; # regex credits: David Sklar and Adam Trachtenberg
 
+
+   /**
+        * Constructor.
+        *
+        * @param   string $sFile
+    */
 
     public function __construct(string $sFile)
     {
@@ -85,16 +116,15 @@ final class LogParser
     }
 
 
-    public function __destruct() {}
-
-
     /**
         * Process log file.
         *
         * @param   string $sFile, filename
+        *
+        * @return  void
     */
 
-    private function processFile(string $sFile)
+    private function processFile(string $sFile): void
     {
         $aMatches = [];
 
@@ -111,7 +141,7 @@ final class LogParser
         {
             $sLine = trim($sLine);
 
-            if (preg_match($this->rxPattern, $sLine, $aMatches))
+            if (preg_match($this->rxPattern, $sLine, $aMatches) === 1)
             {
                 # HTTP general status code count
                 $sResponseDigit = substr($aMatches[8], 0, 1);
@@ -174,8 +204,7 @@ final class LogParser
         }
 
         fclose($rFH);
-
-    } # end parseFile()
+    }
 
 
     /**
@@ -200,14 +229,13 @@ final class LogParser
         $sReport .= $this->sLineBreak;
 
         return $sReport;
-
-    } # end generateReport()
+    }
 
 
     /**
         * Parse, sort, process array of counted fields.
         *
-        * @param   array $aItems, array(field => count)
+        * @param   array<mixed> $aItems, array(field => count)
         * @param   string $sDescription, message
         * @param   boolean $bPercentReq, percentage output toggle
         *
@@ -242,7 +270,5 @@ final class LogParser
         }
 
         return $sOut;
-
-    } # end processFieldCount()
-
+    }
 }
